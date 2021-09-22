@@ -14,36 +14,35 @@ gitVersion{
 
         onBranch('develop'){
             def lastTag = findLatestTag ~/v?(\d+)\.(\d+).+/, true
+            def branch = branchPoint ~/release\/(\d+).(\d+).(\d+)/
+            def versionMatchers
+            int commits = 0
 
+            if(lastTag && branch){
+                if (lastTag.matches[1].toInteger() < branch.matches[1].toInteger()){
+                    commits =  countCommitsSince branch, true
+                    versionMatchers = branch.matches
+                }
+                else {
+                    commits = countCommitsSince lastTag, true
+                    versionMatchers = lastTag.matches
+                }
+            }
 
-            if(lastTag){
-                def branch = branchPoint ~/release\/.+/
-                def commits =  countCommitsSince lastTag
+            if( !versionMatchers && lastTag ){
+                commits = countCommitsSince lastTag
+                versionMatchers = lastTag.matches
+            }
 
-                println "lasttag $lastTag"
-                println "branchPoint $branch"
-
-                version.major = lastTag.matches[1].toInteger()
-                version.minor = lastTag.matches[2].toInteger() + 1
+            if(versionMatchers) {
+                version.major = versionMatchers[1].toInteger()
+                version.minor = versionMatchers[2].toInteger() + 1
                 version.patch = 0
-                version.prereleaseTag = "alpha.$commits"
             }
             else {
-                def branch = branchPoint ~/release\/(\d+).(\d+).(\d+)/
-                int commits;
-
-                if (branch){
-                    version.major = branch.matches[1].toInteger()
-                    version.minor = branch.matches[2].toInteger() + 1
-                    version.patch = 0
-                    commits = countCommitsSince branch, true
-                }
-                else{
-                    commits =  countCommitsSince branchPoint('master'), true
-                }
-
-                version.prereleaseTag = "alpha.$commits"
+                commits =  countCommitsSince branchPoint('master'), true
             }
+            version.prereleaseTag = "alpha.$commits"
         }
 
         onBranch(~/feature\/(.+)/) {
