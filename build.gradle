@@ -29,7 +29,7 @@ gitVersion{
         }
 
         onBranch(~/feature\/(.+)/) {
-            def lastTag = findLatestTag ~/v?(\d+)\.(\d+).(\d+)-(\D+)\.(\d+)/
+            def lastTag = findLatestTag ~/v?\d+\.\d+.\d+-\D+\.(\d+)/
             int commitsFromLastTag
             int commitsFromDevelop = countCommitsSince branchPoint('develop');
 
@@ -37,7 +37,7 @@ gitVersion{
                 version.mayor = lastTag.mayor
                 version.minor = lastTag.minor
                 version.patch = lastTag.patch
-                commitsFromLastTag = lastTag.matches[5]
+                commitsFromLastTag = lastTag.matches[1]
             } else {
                 commitsFromLastTag = 0
             }
