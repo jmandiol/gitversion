@@ -42,6 +42,7 @@ gitVersion{
             else {
                 commits =  countCommitsSince branchPoint('master'), true
             }
+
             version.prereleaseTag = "alpha.$commits"
         }
 
