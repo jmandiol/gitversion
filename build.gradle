@@ -23,7 +23,7 @@ gitVersion{
                 version.prereleaseTag = "alpha.$commits"
             }
             else {
-                def commits =  countCommitsSince branchPoint('master')
+                def commits =  countCommitsSince branchPoint('master'), true
                 version.prereleaseTag = "alpha.$commits"
             }
         }
@@ -31,7 +31,7 @@ gitVersion{
         onBranch(~/feature\/(.+)/) {
             def lastTag = findLatestTag ~/v?\d+\.\d+.\d+-\D+\.(\d+)/
             int commitsFromLastTag
-            int commitsFromDevelop = countCommitsSince branchPoint('develop');
+            int commitsFromDevelop = countCommitsSince branchPoint('develop'), true
 
             if(lastTag){
                 version.mayor = lastTag.mayor
@@ -39,10 +39,11 @@ gitVersion{
                 version.patch = lastTag.patch
                 commitsFromLastTag = lastTag.matches[1]
             } else {
-                commitsFromLastTag = 0
+                commitsFromLastTag =  countCommitsSince branchPoint('master'), true
             }
 
-            version.prereleaseTag = "${matches[1]}.$commitsFromLastTag+$commitsFromDevelop"
+            version.prereleaseTag = "${matches[1]}.$commitsFromLastTag"
+            version.buildMetadata = "$commitsFromDevelop"
         }
     }
 }
