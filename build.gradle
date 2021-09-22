@@ -15,15 +15,23 @@ gitVersion{
         onBranch('develop'){
             def lastTag = findLatestTag ~/v?(\d+)\.(\d+).+/, true
 
+
             if(lastTag){
-                println "lasttag"
+                def branch = branchPoint ~/release\/.+/
                 def commits =  countCommitsSince lastTag
+
+                println "lasttag $lastTag"
+                println "branchPoint $branch"
+
                 version.major = lastTag.matches[1].toInteger()
                 version.minor = lastTag.matches[2].toInteger() + 1
                 version.patch = 0
                 version.prereleaseTag = "alpha.$commits"
             }
             else {
+                def branch = branchPoint ~/release\/.+/
+                println "branch $branch"
+
                 def commits =  countCommitsSince branchPoint('master'), true
                 version.prereleaseTag = "alpha.$commits"
             }
