@@ -75,8 +75,6 @@ gitVersion{
             def versionMatchers
             int commits = 0
 
-            println lastTag.matches[0]
-
             if(lastTag && branch){
                 if (lastTag.matches[1].toInteger() < branch.matches[1].toInteger()){
                     commits =  countCommitsSince  branch, true
