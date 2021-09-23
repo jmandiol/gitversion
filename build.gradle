@@ -11,7 +11,7 @@ plugins{
 gitVersion{
     rules {
         //baseVersion = "1.0.0"
-        onBranch(~/hotfix\/(.+)/){
+        onBranch(~/hotfix\/.+/){
             def commits = countCommitsSince branchPoint('master')
             def tag = findLatestTag ~/v?(\d+).(\d+).(\d+)/
             def major = tag.matches[1].toInteger()
