@@ -9,8 +9,25 @@ plugins{
 }
 
 gitVersion{
-    rules{
+    rules {
         //baseVersion = "1.0.0"
+
+        onBranch(~/release\/(\d+).(\d+).0/){
+            def commits = countCommitsSince currentBranch
+            def major = matches[1].toInteger()
+            def minor = matches[2].toInteger()
+            def betaVersion = 1;
+            def tag = findLatestTag ~/v?$major.$minor.0-beta.(\d+)/
+            if(tag){
+                betaVersion = tag.matchers[1].toInteger() + 1
+            }
+
+            version.major = matches[1].toInteger()
+            version.minor = matches[2].toInteger()
+            version.patch = 0
+            version.prereleaseTag = "beta.$betaVersion"
+            version.buildMetadata = "$commits"
+        }
 
         onBranch('develop'){
             def lastTag = findLatestTag ~/v?(\d+)\.(\d+).+/, true
