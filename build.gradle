@@ -11,6 +11,24 @@ plugins{
 gitVersion{
     rules {
         //baseVersion = "1.0.0"
+        onBranch(~/bugfix\/(.+)/){
+            def branchRelease = branchPoint(~/release\/(\d+).(\d+).0/)
+            def commitsFromDevelop = countCommitsSince branchPoint('develop')
+            def commitsFromRelease = countCommitsSince branchRelease
+            def major = branchRelease.matches[1].toInteger()
+            def minor = branchRelease.matches[2].toInteger()
+            def betaVersion = 1;
+            def tag = findLatestTag ~/v?$major.$minor.0-beta.(\d+)/
+            if(tag){
+                betaVersion = tag.matches[1].toInteger() + 1
+            }
+
+            version.major = major
+            version.minor = minor
+            version.patch = 0
+            version.prereleaseTag = "beta.$betaVersion"
+            version.buildMetadata = "$commitsFromDevelop-${matches[1]}.$commitsFromRelease"
+        }
 
         onBranch(~/release\/(\d+).(\d+).0/){
             def commits = countCommitsSince branchPoint('develop')
@@ -22,8 +40,8 @@ gitVersion{
                 betaVersion = tag.matches[1].toInteger() + 1
             }
 
-            version.major = matches[1].toInteger()
-            version.minor = matches[2].toInteger()
+            version.major = major
+            version.minor = minor
             version.patch = 0
             version.prereleaseTag = "beta.$betaVersion"
             version.buildMetadata = "$commits"
