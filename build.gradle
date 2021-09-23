@@ -19,7 +19,7 @@ gitVersion{
             def betaVersion = 1;
             def tag = findLatestTag ~/v?$major.$minor.0-beta.(\d+)/
             if(tag){
-                betaVersion = tag.matchers[1].toInteger() + 1
+                betaVersion = tag.matches[1].toInteger() + 1
             }
 
             version.major = matches[1].toInteger()
