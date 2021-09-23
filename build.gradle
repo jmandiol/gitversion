@@ -70,10 +70,12 @@ gitVersion{
         }
 
         onBranch('develop'){
-            def lastTag = findLatestTag ~/v?(\d+)\.(\d+).+/, true
+            def lastTag = findLatestTag ~/v?(\d+)\.(\d+)\.0/, true
             def branch = branchPoint ~/release\/(\d+).(\d+).(\d+)/
             def versionMatchers
             int commits = 0
+
+            println lastTag.matches[0]
 
             if(lastTag && branch){
                 if (lastTag.matches[1].toInteger() < branch.matches[1].toInteger()){
@@ -87,7 +89,7 @@ gitVersion{
             }
 
             if( !versionMatchers && lastTag ){
-                commits = countCommitsSince lastTag
+                commits = countCommitsSince lastTag, true
                 versionMatchers = lastTag.matches
             }
 
