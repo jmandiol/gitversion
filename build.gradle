@@ -10,6 +10,12 @@ plugins{
 
 gitVersion{
     rules {
+        onBranch('master'){
+            def tag = findLatestTag ~/v?(\d+\.\d+\.\d+)/
+            version = tag.matches[1]
+            version.buildMetadata = "sha256:${head.id}"
+        }
+
         //baseVersion = "1.0.0"
         onBranch(~/hotfix\/.+/){
             def commits = countCommitsSince branchPoint('master')
@@ -70,7 +76,7 @@ gitVersion{
         }
 
         onBranch('develop'){
-            def lastTag = findLatestTag ~/v?(\d+)\.(\d+).+/, true
+            def lastTag = findLatestTag ~/v?(\d+)\.(\d+)\.0/, true
             def branch = branchPoint ~/release\/(\d+).(\d+).(\d+)/
             def versionMatchers
             int commits = 0
@@ -87,7 +93,7 @@ gitVersion{
             }
 
             if( !versionMatchers && lastTag ){
-                commits = countCommitsSince lastTag
+                commits = countCommitsSince lastTag, true
                 versionMatchers = lastTag.matches
             }
 
