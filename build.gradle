@@ -13,7 +13,7 @@ gitVersion{
         //baseVersion = "1.0.0"
 
         onBranch(~/release\/(\d+).(\d+).0/){
-            def commits = countCommitsSince currentBranch
+            def commits = countCommitsSince branchPoint(branchName)
             def major = matches[1].toInteger()
             def minor = matches[2].toInteger()
             def betaVersion = 1;
@@ -37,7 +37,7 @@ gitVersion{
 
             if(lastTag && branch){
                 if (lastTag.matches[1].toInteger() < branch.matches[1].toInteger()){
-                    commits =  countCommitsSince branch, true
+                    commits =  countCommitsSince  branch, true
                     versionMatchers = branch.matches
                 }
                 else {
