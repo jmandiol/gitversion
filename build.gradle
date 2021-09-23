@@ -79,9 +79,6 @@ gitVersion{
             def lastTag = findLatestTag ~/v?((\d+)\.(\d+)\.0)/, true
             def branch = branchPoint ~/.*\/origin\/release\/((\d+).(\d+).(\d+))/
 
-            println lastTag.matches[1]
-            println branch.matches[1]
-
             def versionMatchers
             int commits = 0
 
