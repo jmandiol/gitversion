@@ -17,10 +17,13 @@ gitVersion{
             def major = tag.matches[1].toInteger()
             def minor = tag.matches[2].toInteger()
             def patch = tag.matches[3].toInteger() + 1
-            def tagPatchBeta = findLatestTag ~/v?$major.$minor.$patch-beta.(\d+)/
+            def tagPatchBeta = findLatestTag ~/v?$major.$minor.$patch-beta\.(\d+).+/
+
+            println tagPatchBeta
+
             def betaVersion = 1;
             if(tagPatchBeta){
-                betaVersion = tag.matches[1].toInteger() + 1
+                betaVersion = tagPatchBeta.matches[1].toInteger() + 1
             }
             version.major = major
             version.minor = minor
@@ -37,7 +40,7 @@ gitVersion{
             def major = branchRelease.matches[1].toInteger()
             def minor = branchRelease.matches[2].toInteger()
             def betaVersion = 1;
-            def tag = findLatestTag ~/v?$major.$minor.0-beta.(\d+)/
+            def tag = findLatestTag ~/v?$major.$minor.0-beta\.(\d+).+/
             if(tag){
                 betaVersion = tag.matches[1].toInteger() + 1
             }
@@ -54,7 +57,7 @@ gitVersion{
             def major = matches[1].toInteger()
             def minor = matches[2].toInteger()
             def betaVersion = 1;
-            def tag = findLatestTag ~/v?$major.$minor.0-beta.(\d+)/
+            def tag = findLatestTag ~/v?$major.$minor.0-beta\.(\d+).+/
             if(tag){
                 betaVersion = tag.matches[1].toInteger() + 1
             }
