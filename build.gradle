@@ -11,6 +11,28 @@ plugins{
 gitVersion{
     rules {
         //baseVersion = "1.0.0"
+        onBranch(~/hotfix\/(.+)/){
+            def commits = countCommitsSince branchPoint('master')
+            def tag = findLatestTag ~/v?(\d+).(\d+).(\d+)/
+            def major = tag.matches[1].toInteger()
+            def minor = tag.matches[2].toInteger()
+            def patch = tag.matches[3].toInteger() + 1
+            def tagPatchBeta = findLatestTag ~/v?$major.$minor.$patch-beta\.(\d+).+/
+
+            println tagPatchBeta
+
+            def betaVersion = 1;
+            if(tagPatchBeta){
+                betaVersion = tagPatchBeta.matches[1].toInteger() + 1
+            }
+            version.major = major
+            version.minor = minor
+            version.patch = patch
+            version.prereleaseTag = "beta.$betaVersion"
+            version.buildMetadata = "$commits"
+
+        }
+
         onBranch(~/bugfix\/(.+)/){
             def branchRelease = branchPoint(~/release\/(\d+).(\d+).0/)
             def commitsFromDevelop = countCommitsSince branchPoint('develop')
@@ -18,7 +40,7 @@ gitVersion{
             def major = branchRelease.matches[1].toInteger()
             def minor = branchRelease.matches[2].toInteger()
             def betaVersion = 1;
-            def tag = findLatestTag ~/v?$major.$minor.0-beta.(\d+)/
+            def tag = findLatestTag ~/v?$major.$minor.0-beta\.(\d+).+/
             if(tag){
                 betaVersion = tag.matches[1].toInteger() + 1
             }
@@ -35,7 +57,7 @@ gitVersion{
             def major = matches[1].toInteger()
             def minor = matches[2].toInteger()
             def betaVersion = 1;
-            def tag = findLatestTag ~/v?$major.$minor.0-beta.(\d+)/
+            def tag = findLatestTag ~/v?$major.$minor.0-beta\.(\d+).+/
             if(tag){
                 betaVersion = tag.matches[1].toInteger() + 1
             }
